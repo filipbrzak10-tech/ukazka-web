@@ -65,6 +65,16 @@ const reviews = [
 ];
 const isSampleReviews = true; // až budou skutečné recenze, přepsat na false
 
+// ---- Dárkové poukazy (platba přes Stripe Payment Links) ----
+// Do "stripe" vlož odkaz ze Stripe (https://buy.stripe.com/...).
+// Dokud je prázdný, tlačítko místo platby vytočí telefon.
+const vouchers = [
+  { name: 'Klasická masáž 60 min', price: '800 Kč', stripe: '' },
+  { name: 'Relaxační masáž 90 min', price: '1 200 Kč', stripe: '' },
+  { name: 'Lávové kameny 90 min', price: '1 300 Kč', stripe: '' },
+  { name: 'Libovolná částka', price: 'od 500 Kč', stripe: '' },
+];
+
 const steps = [
   ['Objednáte se', 'Zavoláte nebo napíšete SMS. Termín domluvíme hned, obvykle do několika dnů.'],
   ['Krátce si promluvíme', 'Na začátku se zeptám, co vás trápí a kde to bolí. Masáž přizpůsobím vám.'],
@@ -92,6 +102,7 @@ const hours = [
         <a href="#cenik">Ceník</a>
         <a href="#recenze">Recenze</a>
         <a href="#jak-to-probiha">Jak to probíhá</a>
+        <a href="#poukazy">Poukazy</a>
         <a href="#kontakt">Kontakt</a>
       </nav>
       <a class="topbar-phone" href={studio.phoneHref}>{studio.phone}</a>
@@ -212,13 +223,31 @@ const hours = [
     </section>
 
     <!-- POUKAZ -->
-    <section class="voucher">
-      <div class="wrap voucher-inner">
-        <div>
+    <section id="poukazy" class="voucher">
+      <div class="wrap">
+        <div class="voucher-head">
           <h2>Darujte hodinu klidu</h2>
-          <p>Dárkový poukaz na libovolnou masáž nebo částku. Platí 6 měsíců, připravím ho do druhého dne.</p>
+          <p>
+            Dárkový poukaz zaplatíte online kartou, Apple Pay nebo Google Pay.
+            Poukaz vám pošlu e-mailem do 24 hodin, platí 6 měsíců.
+          </p>
         </div>
-        <a class="btn btn-amber" href={studio.phoneHref}>Objednat poukaz</a>
+        <ul class="voucher-list">
+          {vouchers.map((v) => (
+            <li class="voucher-item">
+              <div>
+                <h3>{v.name}</h3>
+                <p class="voucher-price">{v.price}</p>
+              </div>
+              {v.stripe ? (
+                <a class="btn btn-amber" href={v.stripe} target="_blank" rel="noopener">Koupit poukaz</a>
+              ) : (
+                <a class="btn btn-amber" href={studio.phoneHref}>Zavolat</a>
+              )}
+            </li>
+          ))}
+        </ul>
+        <p class="voucher-secure">Platba probíhá přes zabezpečenou bránu Stripe. Údaje o kartě nevidíme.</p>
       </div>
     </section>
 
@@ -495,15 +524,30 @@ const hours = [
 
   /* --- Poukaz --- */
   .voucher { background: var(--forest); color: var(--sage); }
-  .voucher-inner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-    padding-block: 3rem;
+  .voucher { padding-block: clamp(3.5rem, 8vw, 5.5rem); }
+  .voucher-head h2 { font-size: var(--step-3); color: #fff; }
+  .voucher-head p { margin-top: 0.75rem; max-width: 38rem; color: rgb(236 238 234 / 0.85); }
+  .voucher-list {
+    list-style: none;
+    margin: 2.5rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 1rem;
   }
-  .voucher h2 { font-size: var(--step-2); color: #fff; }
-  .voucher p { margin-top: 0.5rem; max-width: 36rem; color: rgb(236 238 234 / 0.85); }
+  .voucher-item {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    border: 1px solid rgb(236 238 234 / 0.22);
+    border-radius: 1.25rem;
+  }
+  .voucher-item h3 { font-size: var(--step-1); color: #fff; }
+  .voucher-price { margin-top: 0.35rem; font-weight: 600; color: var(--amber); }
+  .voucher-item .btn { width: 100%; padding-inline: 1rem; text-align: center; white-space: nowrap; }
+  .voucher-secure { margin-top: 1.5rem; font-size: var(--step--1); color: rgb(236 238 234 / 0.65); }
 
   /* --- Kontakt --- */
   .contact { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; }
@@ -550,7 +594,7 @@ const hours = [
     .process { grid-template-columns: 1fr; }
     .process-photo { aspect-ratio: 16 / 10; }
     .contact { grid-template-columns: 1fr; }
-    .voucher-inner { flex-direction: column; align-items: flex-start; }
+    .voucher-list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   }
   @media (max-width: 640px) {
     .topbar nav { display: none; }
@@ -559,6 +603,7 @@ const hours = [
     .menu-prices { min-width: 0; max-width: 16rem; }
     .steps { grid-template-columns: 1fr; }
     .hero-actions .btn { flex: 1 1 100%; }
+    .voucher-list { grid-template-columns: 1fr; }
     .ripple { display: none; }
   }
 </style>
