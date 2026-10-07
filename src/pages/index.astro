@@ -1,0 +1,434 @@
+---
+import Layout from '../layouts/Layout.astro';
+
+// ---- Údaje o studiu (tady se mění kontakty) ----
+const studio = {
+  name: 'Úleva',
+  city: 'Hradec Králové',
+  phone: '+420 777 000 000',
+  phoneHref: 'tel:+420777000000',
+  email: 'info@uleva-masaze.cz',
+  street: 'Ulice 12',
+  zip: '500 02 Hradec Králové',
+};
+
+// ---- Ceník ----
+const services = [
+  {
+    name: 'Klasická masáž',
+    text: 'Záda, šíje a ramena. Uvolní ztuhlé svaly po dlouhém sezení u počítače nebo za volantem.',
+    prices: [['60 min', '800 Kč'], ['90 min', '1 100 Kč']],
+  },
+  {
+    name: 'Sportovní masáž',
+    text: 'Hlubší, důraznější práce se svaly před výkonem nebo po něm. Pro běžce, cyklisty i víkendové sportovce.',
+    prices: [['60 min', '900 Kč']],
+  },
+  {
+    name: 'Relaxační masáž s aromaterapií',
+    text: 'Pomalé, plynulé tahy a teplý olej s esenciálními oleji podle vaší volby. Když potřebujete hlavně vypnout.',
+    prices: [['60 min', '850 Kč'], ['90 min', '1 200 Kč']],
+  },
+  {
+    name: 'Masáž lávovými kameny',
+    text: 'Nahřáté čedičové kameny prohřejí svaly do hloubky. Ideální v zimě a při chronickém napětí.',
+    prices: [['90 min', '1 300 Kč']],
+  },
+  {
+    name: 'Baňkování',
+    text: 'Podtlakové baňky na zádech uvolní fascie a podpoří prokrvení. Lze přidat ke klasické masáži.',
+    prices: [['30 min', '450 Kč']],
+  },
+];
+
+const steps = [
+  ['Objednáte se', 'Zavoláte nebo napíšete SMS. Termín domluvíme hned, obvykle do několika dnů.'],
+  ['Krátce si promluvíme', 'Na začátku se zeptám, co vás trápí a kde to bolí. Masáž přizpůsobím vám.'],
+  ['Masáž', 'Teplá místnost, čisté prádlo, klid. Tlak můžete kdykoli upravit.'],
+  ['Doporučení na doma', 'Odnesete si pár cviků nebo protažení, aby úleva vydržela déle.'],
+];
+
+const hours = [
+  ['Pondělí – čtvrtek', '9:00 – 20:00'],
+  ['Pátek', '9:00 – 16:00'],
+  ['Víkend', 'po domluvě'],
+];
+---
+<Layout
+  title={`${studio.name} – masáže ${studio.city}`}
+  description={`Masážní studio ${studio.name} v Hradci Králové. Klasické, sportovní, relaxační masáže a lávové kameny. Objednávky na ${studio.phone}.`}
+>
+  <header class="topbar">
+    <div class="wrap topbar-inner">
+      <a href="#" class="logo" aria-label="Úleva – úvod">
+        <svg viewBox="0 0 32 32" aria-hidden="true"><circle cx="16" cy="16" r="4"/><circle cx="16" cy="16" r="9" opacity=".55"/><circle cx="16" cy="16" r="14" opacity=".25"/></svg>
+        Úleva
+      </a>
+      <nav aria-label="Hlavní menu">
+        <a href="#cenik">Ceník</a>
+        <a href="#jak-to-probiha">Jak to probíhá</a>
+        <a href="#kontakt">Kontakt</a>
+      </nav>
+      <a class="topbar-phone" href={studio.phoneHref}>{studio.phone}</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- HERO -->
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <div class="hero-text">
+          <p class="hero-place">Masážní studio v Hradci Králové</p>
+          <h1>Masáž, po které se vám uleví.</h1>
+          <p class="hero-lead">
+            Ztuhlá záda, bolavá šíje nebo prostě potřeba na hodinu vypnout.
+            Klasické, sportovní i relaxační masáže v klidném studiu kousek od centra.
+          </p>
+          <div class="hero-actions">
+            <a class="btn btn-amber" href={studio.phoneHref}>Zavolat a objednat se</a>
+            <a class="btn btn-ghost" href="#cenik">Prohlédnout ceník</a>
+          </div>
+        </div>
+
+        <div class="ripple" aria-hidden="true">
+          <svg viewBox="0 0 400 400">
+            <defs>
+              <radialGradient id="glow" cx="50%" cy="50%" r="50%">
+                <stop offset="0%" stop-color="#D9A45B" stop-opacity=".55"/>
+                <stop offset="100%" stop-color="#D9A45B" stop-opacity="0"/>
+              </radialGradient>
+            </defs>
+            <circle cx="200" cy="200" r="120" fill="url(#glow)"/>
+            {[28, 56, 86, 118, 152, 188].map((r, i) => (
+              <ellipse
+                class="ring"
+                style={`--i:${i}`}
+                cx="200" cy="200"
+                rx={r * 1.08} ry={r}
+              />
+            ))}
+            <circle cx="200" cy="200" r="9" fill="#D9A45B"/>
+          </svg>
+        </div>
+      </div>
+    </section>
+
+    <!-- CENÍK -->
+    <section id="cenik" class="section">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Masáže a ceník</h2>
+          <p>Ceny jsou konečné, včetně oleje a ručníků. Nevíte, kterou masáž vybrat? Zavolejte a poradím.</p>
+        </div>
+
+        <ul class="menu">
+          {services.map((s) => (
+            <li class="menu-item">
+              <div class="menu-desc">
+                <h3>{s.name}</h3>
+                <p>{s.text}</p>
+              </div>
+              <dl class="menu-prices">
+                {s.prices.map(([d, p]) => (
+                  <div><dt>{d}</dt><dd>{p}</dd></div>
+                ))}
+              </dl>
+            </li>
+          ))}
+        </ul>
+      </div>
+    </section>
+
+    <!-- JAK TO PROBÍHÁ -->
+    <section id="jak-to-probiha" class="section section-sage">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Jak to probíhá</h2>
+          <p>Poprvé na masáži? Nic složitého, stačí přijít v pohodlném oblečení.</p>
+        </div>
+        <ol class="steps">
+          {steps.map(([t, d]) => (
+            <li>
+              <h3>{t}</h3>
+              <p>{d}</p>
+            </li>
+          ))}
+        </ol>
+      </div>
+    </section>
+
+    <!-- POUKAZ -->
+    <section class="voucher">
+      <div class="wrap voucher-inner">
+        <div>
+          <h2>Darujte hodinu klidu</h2>
+          <p>Dárkový poukaz na libovolnou masáž nebo částku. Platí 6 měsíců, připravím ho do druhého dne.</p>
+        </div>
+        <a class="btn btn-amber" href={studio.phoneHref}>Objednat poukaz</a>
+      </div>
+    </section>
+
+    <!-- KONTAKT -->
+    <section id="kontakt" class="section">
+      <div class="wrap contact">
+        <div class="contact-main">
+          <h2>Kde mě najdete</h2>
+          <address>
+            {studio.street}<br />{studio.zip}
+          </address>
+          <p class="contact-note">Parkování přímo před domem. Studio je v přízemí, bez schodů.</p>
+          <div class="contact-links">
+            <a class="contact-big" href={studio.phoneHref}>{studio.phone}</a>
+            <a href={`mailto:${studio.email}`}>{studio.email}</a>
+          </div>
+        </div>
+
+        <div class="contact-hours">
+          <h3>Otevírací doba</h3>
+          <dl>
+            {hours.map(([d, t]) => (
+              <div><dt>{d}</dt><dd>{t}</dd></div>
+            ))}
+          </dl>
+          <p class="contact-note">Masíruji jen na objednávku, proto prosím vždy zavolejte předem.</p>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-inner">
+      <span>© {new Date().getFullYear()} Masáže Úleva, {studio.city}</span>
+      <a href={studio.phoneHref}>{studio.phone}</a>
+    </div>
+  </footer>
+</Layout>
+
+<style>
+  .wrap {
+    max-width: var(--max);
+    margin-inline: auto;
+    padding-inline: var(--gutter);
+  }
+
+  /* --- Top bar --- */
+  .topbar {
+    background: var(--forest);
+    color: var(--sage);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+  }
+  .topbar-inner {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+    min-height: 4rem;
+  }
+  .logo {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.55rem;
+    font-family: var(--serif);
+    font-size: 1.4rem;
+    text-decoration: none;
+    color: #fff;
+  }
+  .logo svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: var(--amber); stroke-width: 2; }
+  .topbar nav { display: flex; gap: 1.5rem; margin-left: auto; }
+  .topbar nav a {
+    text-decoration: none;
+    font-size: var(--step--1);
+    font-weight: 500;
+    opacity: 0.85;
+  }
+  .topbar nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  .topbar-phone {
+    font-weight: 600;
+    font-size: var(--step--1);
+    text-decoration: none;
+    color: var(--amber);
+    white-space: nowrap;
+  }
+
+  /* --- Hero --- */
+  .hero {
+    background: var(--forest);
+    color: var(--sage);
+    overflow: hidden;
+  }
+  .hero-inner {
+    display: grid;
+    grid-template-columns: 1.15fr 1fr;
+    align-items: center;
+    gap: 2rem;
+    padding-block: clamp(3.5rem, 9vw, 7rem);
+  }
+  .hero-place {
+    color: var(--amber);
+    font-weight: 500;
+    margin-bottom: 1.25rem;
+  }
+  .hero h1 {
+    font-size: var(--step-4);
+    color: #fff;
+    max-width: 15ch;
+    letter-spacing: -0.01em;
+  }
+  .hero-lead {
+    margin-top: 1.5rem;
+    max-width: 34rem;
+    font-size: var(--step-1);
+    line-height: 1.55;
+    color: rgb(228 233 224 / 0.85);
+  }
+  .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; }
+
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 3.1rem;
+    padding: 0 1.5rem;
+    border-radius: 999px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background-color .2s, color .2s;
+  }
+  .btn-amber { background: var(--amber); color: var(--forest-deep); }
+  .btn-amber:hover { background: #E6B670; }
+  .btn-ghost { border: 1.5px solid rgb(228 233 224 / 0.4); color: var(--sage); }
+  .btn-ghost:hover { border-color: var(--sage); }
+
+  .ripple svg { width: 100%; height: auto; display: block; overflow: visible; }
+  .ring {
+    fill: none;
+    stroke: var(--sage);
+    stroke-width: 1.4;
+    opacity: calc(0.55 - var(--i) * 0.08);
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    animation: spread 1.8s cubic-bezier(.2,.7,.2,1) both;
+    animation-delay: calc(var(--i) * 0.12s);
+  }
+  @keyframes spread {
+    from { scale: 0.35; opacity: 0; }
+  }
+
+  /* --- Sections --- */
+  .section { padding-block: clamp(4rem, 9vw, 6.5rem); }
+  .section-sage { background: var(--sage); }
+  .section-head {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem;
+    align-items: end;
+    margin-bottom: 3rem;
+  }
+  .section-head h2 { font-size: var(--step-3); color: var(--forest); }
+  .section-head p { color: var(--ink-soft); max-width: 32rem; }
+
+  /* --- Ceník jako menu --- */
+  .menu { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--forest); }
+  .menu-item {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 2rem;
+    padding-block: 1.75rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .menu-desc h3 { font-size: var(--step-2); color: var(--forest); }
+  .menu-desc p { margin-top: 0.5rem; color: var(--ink-soft); max-width: 38rem; }
+  .menu-prices { margin: 0; display: flex; flex-direction: column; gap: 0.35rem; min-width: 11rem; }
+  .menu-prices div { display: flex; justify-content: space-between; gap: 1.5rem; }
+  .menu-prices dt { color: var(--ink-soft); }
+  .menu-prices dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
+
+  /* --- Postup --- */
+  .steps {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 2rem;
+    counter-reset: step;
+  }
+  .steps li { counter-increment: step; border-top: 1.5px solid var(--forest); padding-top: 1.25rem; }
+  .steps li::before {
+    content: counter(step);
+    display: block;
+    font-family: var(--serif);
+    font-size: var(--step-2);
+    color: var(--moss);
+    margin-bottom: 0.75rem;
+  }
+  .steps h3 { font-size: var(--step-1); color: var(--forest); }
+  .steps p { margin-top: 0.5rem; color: var(--ink-soft); font-size: 1rem; }
+
+  /* --- Poukaz --- */
+  .voucher { background: var(--forest-deep); color: var(--sage); }
+  .voucher-inner {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    padding-block: 3rem;
+  }
+  .voucher h2 { font-size: var(--step-2); color: #fff; }
+  .voucher p { margin-top: 0.5rem; max-width: 36rem; color: rgb(228 233 224 / 0.8); }
+
+  /* --- Kontakt --- */
+  .contact { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; }
+  .contact h2 { font-size: var(--step-3); color: var(--forest); }
+  .contact address { font-style: normal; font-size: var(--step-1); margin-top: 1.25rem; }
+  .contact-note { color: var(--ink-soft); margin-top: 1rem; font-size: 1rem; }
+  .contact-links { display: flex; flex-direction: column; gap: 0.4rem; margin-top: 2rem; }
+  .contact-big {
+    font-family: var(--serif);
+    font-size: var(--step-3);
+    color: var(--forest);
+    text-decoration: none;
+  }
+  .contact-big:hover { text-decoration: underline; text-decoration-thickness: 2px; text-underline-offset: 6px; }
+  .contact-hours {
+    background: var(--sage);
+    border-radius: 1.25rem;
+    padding: 2rem;
+    align-self: start;
+  }
+  .contact-hours h3 { font-size: var(--step-1); color: var(--forest); margin-bottom: 1rem; }
+  .contact-hours dl { margin: 0; }
+  .contact-hours dl div {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    padding-block: 0.6rem;
+    border-bottom: 1px solid var(--line);
+  }
+  .contact-hours dd { margin: 0; font-weight: 600; }
+
+  /* --- Patička --- */
+  .footer { background: var(--forest); color: rgb(228 233 224 / 0.75); font-size: var(--step--1); }
+  .footer-inner { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; flex-wrap: wrap; }
+  .footer a { text-decoration: none; }
+
+  /* --- Mobil --- */
+  @media (max-width: 860px) {
+    .hero-inner { grid-template-columns: 1fr; }
+    .ripple { max-width: 18rem; justify-self: center; margin-top: -1rem; }
+    .section-head { grid-template-columns: 1fr; gap: 0.75rem; }
+    .steps { grid-template-columns: 1fr 1fr; }
+    .contact { grid-template-columns: 1fr; }
+    .voucher-inner { flex-direction: column; align-items: flex-start; }
+  }
+  @media (max-width: 640px) {
+    .topbar nav { display: none; }
+    .topbar-phone { margin-left: auto; }
+    .menu-item { grid-template-columns: 1fr; gap: 1rem; }
+    .menu-prices { min-width: 0; max-width: 16rem; }
+    .steps { grid-template-columns: 1fr; }
+    .hero-actions .btn { flex: 1 1 100%; }
+  }
+</style>
