@@ -10,6 +10,14 @@ const studio = {
   email: 'info@uleva-masaze.cz',
   street: 'Ulice 12',
   zip: '500 02 Hradec Králové',
+  // odkaz na profil na Google Maps (kvůli recenzím)
+  googleUrl: 'https://www.google.com/maps/search/mas%C3%A1%C5%BEe+Hradec+Kr%C3%A1lov%C3%A9',
+};
+
+// ---- Fotky (ilustrační, nahradit fotkami ze studia) ----
+const photos = {
+  hero: 'https://images.unsplash.com/photo-1519824145371-296894a0daa9?auto=format&fit=crop&w=1100&q=75',
+  stones: 'https://images.unsplash.com/photo-1600334089648-b0d9d3028eb2?auto=format&fit=crop&w=1100&q=75',
 };
 
 // ---- Ceník ----
@@ -34,12 +42,28 @@ const services = [
     text: 'Nahřáté čedičové kameny prohřejí svaly do hloubky. Ideální v zimě a při chronickém napětí.',
     prices: [['90 min', '1 300 Kč']],
   },
+];
+
+// ---- Recenze ----
+// UKÁZKA: před spuštěním nahradit skutečnými recenzemi z Google (jméno, text, počet hvězd)
+const reviews = [
   {
-    name: 'Baňkování',
-    text: 'Podtlakové baňky na zádech uvolní fascie a podpoří prokrvení. Lze přidat ke klasické masáži.',
-    prices: [['30 min', '450 Kč']],
+    text: 'Chodím kvůli bolavým zádům z kanceláře. Po masáži můžu zase normálně otočit hlavou a úleva vydrží několik týdnů.',
+    author: 'Ukázková recenze',
+    stars: 5,
+  },
+  {
+    text: 'Dostala jsem poukaz k narozeninám. Klidné prostředí, příjemný přístup a na začátku se mě podrobně vyptala, co mě trápí.',
+    author: 'Ukázková recenze',
+    stars: 5,
+  },
+  {
+    text: 'Sportovní masáž před půlmaratonem. Důrazná, ale přesně podle domluvy. Objednávám se pravidelně.',
+    author: 'Ukázková recenze',
+    stars: 5,
   },
 ];
+const isSampleReviews = true; // až budou skutečné recenze, přepsat na false
 
 const steps = [
   ['Objednáte se', 'Zavoláte nebo napíšete SMS. Termín domluvíme hned, obvykle do několika dnů.'],
@@ -66,6 +90,7 @@ const hours = [
       </a>
       <nav aria-label="Hlavní menu">
         <a href="#cenik">Ceník</a>
+        <a href="#recenze">Recenze</a>
         <a href="#jak-to-probiha">Jak to probíhá</a>
         <a href="#kontakt">Kontakt</a>
       </nav>
@@ -85,30 +110,23 @@ const hours = [
             Klasické, sportovní i relaxační masáže v klidném studiu kousek od centra.
           </p>
           <div class="hero-actions">
-            <a class="btn btn-amber" href={studio.phoneHref}>Zavolat a objednat se</a>
+            <a class="btn btn-primary" href={studio.phoneHref}>Zavolat a objednat se</a>
             <a class="btn btn-ghost" href="#cenik">Prohlédnout ceník</a>
           </div>
         </div>
 
-        <div class="ripple" aria-hidden="true">
-          <svg viewBox="0 0 400 400">
-            <defs>
-              <radialGradient id="glow" cx="50%" cy="50%" r="50%">
-                <stop offset="0%" stop-color="#D9A45B" stop-opacity=".55"/>
-                <stop offset="100%" stop-color="#D9A45B" stop-opacity="0"/>
-              </radialGradient>
-            </defs>
-            <circle cx="200" cy="200" r="120" fill="url(#glow)"/>
-            {[28, 56, 86, 118, 152, 188].map((r, i) => (
-              <ellipse
-                class="ring"
-                style={`--i:${i}`}
-                cx="200" cy="200"
-                rx={r * 1.08} ry={r}
-              />
+        <div class="hero-photo">
+          <svg class="ripple" viewBox="0 0 400 400" aria-hidden="true">
+            {[40, 80, 122, 166].map((r, i) => (
+              <circle class="ring" style={`--i:${i}`} cx="200" cy="200" r={r} />
             ))}
-            <circle cx="200" cy="200" r="9" fill="#D9A45B"/>
           </svg>
+          <img
+            src={photos.hero}
+            alt="Masérka uvolňuje klientce svaly na zádech"
+            width="1100" height="1300"
+            fetchpriority="high"
+          />
         </div>
       </div>
     </section>
@@ -139,21 +157,57 @@ const hours = [
       </div>
     </section>
 
-    <!-- JAK TO PROBÍHÁ -->
-    <section id="jak-to-probiha" class="section section-sage">
+    <!-- RECENZE -->
+    <section id="recenze" class="section section-soft">
       <div class="wrap">
         <div class="section-head">
-          <h2>Jak to probíhá</h2>
-          <p>Poprvé na masáži? Nic složitého, stačí přijít v pohodlném oblečení.</p>
+          <h2>Co říkají klienti</h2>
+          <p>
+            Recenze z Google od lidí, kteří u mě byli.
+            <a href={studio.googleUrl} target="_blank" rel="noopener">Zobrazit všechny na Google</a>
+          </p>
         </div>
-        <ol class="steps">
-          {steps.map(([t, d]) => (
-            <li>
-              <h3>{t}</h3>
-              <p>{d}</p>
+
+        {isSampleReviews && (
+          <p class="sample-note">Ukázka rozložení. Před spuštěním sem vložíme skutečné recenze z Google.</p>
+        )}
+
+        <ul class="reviews">
+          {reviews.map((r) => (
+            <li class="review">
+              <span class="stars" aria-label={`${r.stars} z 5 hvězd`}>
+                {'★'.repeat(r.stars)}{'☆'.repeat(5 - r.stars)}
+              </span>
+              <blockquote>{r.text}</blockquote>
+              <p class="review-author">{r.author}</p>
             </li>
           ))}
-        </ol>
+        </ul>
+      </div>
+    </section>
+
+    <!-- JAK TO PROBÍHÁ -->
+    <section id="jak-to-probiha" class="section">
+      <div class="wrap process">
+        <img
+          class="process-photo"
+          src={photos.stones}
+          alt="Lávové kameny na zádech klienta"
+          width="1100" height="1300"
+          loading="lazy"
+        />
+        <div>
+          <h2>Jak to probíhá</h2>
+          <p class="process-lead">Poprvé na masáži? Nic složitého, stačí přijít v pohodlném oblečení.</p>
+          <ol class="steps">
+            {steps.map(([t, d]) => (
+              <li>
+                <h3>{t}</h3>
+                <p>{d}</p>
+              </li>
+            ))}
+          </ol>
+        </div>
       </div>
     </section>
 
@@ -213,12 +267,12 @@ const hours = [
 
   /* --- Top bar --- */
   .topbar {
-    background: var(--forest);
-    color: var(--sage);
+    background: rgb(250 250 248 / 0.92);
+    backdrop-filter: blur(8px);
     position: sticky;
     top: 0;
     z-index: 10;
-    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    border-bottom: 1px solid var(--line);
   }
   .topbar-inner {
     display: flex;
@@ -233,7 +287,7 @@ const hours = [
     font-family: var(--serif);
     font-size: 1.4rem;
     text-decoration: none;
-    color: #fff;
+    color: var(--forest);
   }
   .logo svg { width: 1.6rem; height: 1.6rem; fill: none; stroke: var(--amber); stroke-width: 2; }
   .topbar nav { display: flex; gap: 1.5rem; margin-left: auto; }
@@ -241,38 +295,34 @@ const hours = [
     text-decoration: none;
     font-size: var(--step--1);
     font-weight: 500;
-    opacity: 0.85;
+    color: var(--ink-soft);
   }
-  .topbar nav a:hover { opacity: 1; text-decoration: underline; text-underline-offset: 4px; }
+  .topbar nav a:hover { color: var(--forest); text-decoration: underline; text-underline-offset: 4px; }
   .topbar-phone {
     font-weight: 600;
     font-size: var(--step--1);
     text-decoration: none;
-    color: var(--amber);
+    color: var(--forest);
     white-space: nowrap;
   }
 
   /* --- Hero --- */
-  .hero {
-    background: var(--forest);
-    color: var(--sage);
-    overflow: hidden;
-  }
+  .hero { overflow: hidden; }
   .hero-inner {
     display: grid;
-    grid-template-columns: 1.15fr 1fr;
+    grid-template-columns: minmax(0,1.1fr) minmax(0,1fr);
     align-items: center;
-    gap: 2rem;
-    padding-block: clamp(3.5rem, 9vw, 7rem);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    padding-block: clamp(3rem, 7vw, 5.5rem);
   }
   .hero-place {
-    color: var(--amber);
+    color: var(--moss);
     font-weight: 500;
     margin-bottom: 1.25rem;
   }
   .hero h1 {
     font-size: var(--step-4);
-    color: #fff;
+    color: var(--forest);
     max-width: 15ch;
     letter-spacing: -0.01em;
   }
@@ -281,9 +331,44 @@ const hours = [
     max-width: 34rem;
     font-size: var(--step-1);
     line-height: 1.55;
-    color: rgb(228 233 224 / 0.85);
+    color: var(--ink-soft);
   }
   .hero-actions { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 2.25rem; }
+
+  .hero-photo { position: relative; }
+  .hero-photo img {
+    position: relative;
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 12rem 12rem 1.25rem 1.25rem;
+    background: var(--sage);
+  }
+  .ripple {
+    position: absolute;
+    width: 70%;
+    left: -22%;
+    z-index: 1;
+    pointer-events: none;
+    bottom: -14%;
+    overflow: visible;
+  }
+  .ring {
+    fill: none;
+    stroke: var(--amber);
+    stroke-width: 1.5;
+    opacity: calc(0.7 - var(--i) * 0.14);
+    transform-box: view-box;
+    transform-origin: 200px 200px;
+    animation: spread 1.8s cubic-bezier(.2,.7,.2,1) both;
+    animation-delay: calc(0.3s + var(--i) * 0.12s);
+  }
+  @keyframes spread {
+    from { scale: 0.3; opacity: 0; }
+  }
 
   .btn {
     display: inline-flex;
@@ -294,31 +379,18 @@ const hours = [
     border-radius: 999px;
     font-weight: 600;
     text-decoration: none;
-    transition: background-color .2s, color .2s;
+    transition: background-color .2s, color .2s, border-color .2s;
   }
+  .btn-primary { background: var(--forest); color: #fff; }
+  .btn-primary:hover { background: var(--forest-deep); }
+  .btn-ghost { border: 1.5px solid var(--line); color: var(--ink); }
+  .btn-ghost:hover { border-color: var(--forest); }
   .btn-amber { background: var(--amber); color: var(--forest-deep); }
   .btn-amber:hover { background: #E6B670; }
-  .btn-ghost { border: 1.5px solid rgb(228 233 224 / 0.4); color: var(--sage); }
-  .btn-ghost:hover { border-color: var(--sage); }
-
-  .ripple svg { width: 100%; height: auto; display: block; overflow: visible; }
-  .ring {
-    fill: none;
-    stroke: var(--sage);
-    stroke-width: 1.4;
-    opacity: calc(0.55 - var(--i) * 0.08);
-    transform-box: view-box;
-    transform-origin: 200px 200px;
-    animation: spread 1.8s cubic-bezier(.2,.7,.2,1) both;
-    animation-delay: calc(var(--i) * 0.12s);
-  }
-  @keyframes spread {
-    from { scale: 0.35; opacity: 0; }
-  }
 
   /* --- Sections --- */
   .section { padding-block: clamp(4rem, 9vw, 6.5rem); }
-  .section-sage { background: var(--sage); }
+  .section-soft { background: var(--sage); }
   .section-head {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -328,9 +400,10 @@ const hours = [
   }
   .section-head h2 { font-size: var(--step-3); color: var(--forest); }
   .section-head p { color: var(--ink-soft); max-width: 32rem; }
+  .section-head a { color: var(--forest); font-weight: 600; text-underline-offset: 3px; }
 
   /* --- Ceník jako menu --- */
-  .menu { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--forest); }
+  .menu { list-style: none; margin: 0; padding: 0; border-top: 1.5px solid var(--ink); }
   .menu-item {
     display: grid;
     grid-template-columns: 1fr auto;
@@ -338,37 +411,90 @@ const hours = [
     padding-block: 1.75rem;
     border-bottom: 1px solid var(--line);
   }
-  .menu-desc h3 { font-size: var(--step-2); color: var(--forest); }
+  .menu-desc h3 { font-size: var(--step-2); color: var(--ink); }
   .menu-desc p { margin-top: 0.5rem; color: var(--ink-soft); max-width: 38rem; }
   .menu-prices { margin: 0; display: flex; flex-direction: column; gap: 0.35rem; min-width: 11rem; }
   .menu-prices div { display: flex; justify-content: space-between; gap: 1.5rem; }
   .menu-prices dt { color: var(--ink-soft); }
   .menu-prices dd { margin: 0; font-weight: 600; font-variant-numeric: tabular-nums; white-space: nowrap; }
 
-  /* --- Postup --- */
-  .steps {
+  /* --- Recenze --- */
+  .sample-note {
+    margin: -1.5rem 0 1.5rem;
+    font-size: var(--step--1);
+    color: #8A5A16;
+    background: #F6E7CF;
+    border-radius: 999px;
+    padding: 0.4rem 1rem;
+    display: inline-block;
+  }
+  .reviews {
     list-style: none;
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 2rem;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1.25rem;
+  }
+  .review {
+    background: #fff;
+    border-radius: 1.25rem;
+    padding: 1.75rem;
+    display: flex;
+    flex-direction: column;
+  }
+  .stars { color: var(--amber); letter-spacing: 0.15em; font-size: 1.1rem; }
+  .review blockquote {
+    margin: 1rem 0 1.5rem;
+    font-family: var(--serif);
+    font-size: 1.15rem;
+    line-height: 1.5;
+    color: var(--ink);
+  }
+  .review-author { margin-top: auto; font-size: var(--step--1); color: var(--ink-soft); font-weight: 500; }
+
+  /* --- Postup --- */
+  .process {
+    display: grid;
+    grid-template-columns: minmax(0,0.8fr) minmax(0,1.2fr);
+    gap: clamp(2rem, 5vw, 4.5rem);
+    align-items: center;
+  }
+  .process-photo {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-width: 100%;
+    aspect-ratio: 4 / 5;
+    object-fit: cover;
+    border-radius: 1.25rem;
+    background: var(--sage);
+  }
+  .process h2 { font-size: var(--step-3); color: var(--forest); }
+  .process-lead { color: var(--ink-soft); margin-top: 0.75rem; }
+  .steps {
+    list-style: none;
+    margin: 2.25rem 0 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 2rem 2.5rem;
     counter-reset: step;
   }
-  .steps li { counter-increment: step; border-top: 1.5px solid var(--forest); padding-top: 1.25rem; }
+  .steps li { counter-increment: step; border-top: 1.5px solid var(--ink); padding-top: 1.1rem; }
   .steps li::before {
     content: counter(step);
     display: block;
     font-family: var(--serif);
     font-size: var(--step-2);
-    color: var(--moss);
-    margin-bottom: 0.75rem;
+    color: var(--amber);
+    margin-bottom: 0.5rem;
   }
-  .steps h3 { font-size: var(--step-1); color: var(--forest); }
+  .steps h3 { font-size: var(--step-1); color: var(--ink); }
   .steps p { margin-top: 0.5rem; color: var(--ink-soft); font-size: 1rem; }
 
   /* --- Poukaz --- */
-  .voucher { background: var(--forest-deep); color: var(--sage); }
+  .voucher { background: var(--forest); color: var(--sage); }
   .voucher-inner {
     display: flex;
     align-items: center;
@@ -377,7 +503,7 @@ const hours = [
     padding-block: 3rem;
   }
   .voucher h2 { font-size: var(--step-2); color: #fff; }
-  .voucher p { margin-top: 0.5rem; max-width: 36rem; color: rgb(228 233 224 / 0.8); }
+  .voucher p { margin-top: 0.5rem; max-width: 36rem; color: rgb(236 238 234 / 0.85); }
 
   /* --- Kontakt --- */
   .contact { display: grid; grid-template-columns: 1.3fr 1fr; gap: 3rem; }
@@ -398,7 +524,7 @@ const hours = [
     padding: 2rem;
     align-self: start;
   }
-  .contact-hours h3 { font-size: var(--step-1); color: var(--forest); margin-bottom: 1rem; }
+  .contact-hours h3 { font-size: var(--step-1); color: var(--ink); margin-bottom: 1rem; }
   .contact-hours dl { margin: 0; }
   .contact-hours dl div {
     display: flex;
@@ -410,16 +536,19 @@ const hours = [
   .contact-hours dd { margin: 0; font-weight: 600; }
 
   /* --- Patička --- */
-  .footer { background: var(--forest); color: rgb(228 233 224 / 0.75); font-size: var(--step--1); }
+  .footer { background: var(--ink); color: rgb(236 238 234 / 0.7); font-size: var(--step--1); }
   .footer-inner { display: flex; justify-content: space-between; gap: 1rem; padding-block: 1.5rem; flex-wrap: wrap; }
   .footer a { text-decoration: none; }
 
   /* --- Mobil --- */
   @media (max-width: 860px) {
     .hero-inner { grid-template-columns: 1fr; }
-    .ripple { max-width: 18rem; justify-self: center; margin-top: -1rem; }
+    .hero-photo { max-width: 26rem; justify-self: center; width: 100%; }
+    .ripple { left: -12%; }
     .section-head { grid-template-columns: 1fr; gap: 0.75rem; }
-    .steps { grid-template-columns: 1fr 1fr; }
+    .reviews { grid-template-columns: 1fr; }
+    .process { grid-template-columns: 1fr; }
+    .process-photo { aspect-ratio: 16 / 10; }
     .contact { grid-template-columns: 1fr; }
     .voucher-inner { flex-direction: column; align-items: flex-start; }
   }
@@ -430,5 +559,6 @@ const hours = [
     .menu-prices { min-width: 0; max-width: 16rem; }
     .steps { grid-template-columns: 1fr; }
     .hero-actions .btn { flex: 1 1 100%; }
+    .ripple { display: none; }
   }
 </style>
